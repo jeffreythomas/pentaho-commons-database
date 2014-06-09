@@ -1431,6 +1431,27 @@ public class DataHandler extends AbstractXulEventHandler {
       meta.setInformixServername(serverNameBox.getValue());
     }
 
+    if (optionsParameterTree != null) {
+      Object[][] values = optionsParameterTree.getValues();
+      for (int i = 0; i < values.length; i++) {
+
+        String parameter = (String) values[i][0];
+        String value = (String) values[i][1];
+
+        if (value == null) {
+          value = ""; //$NON-NLS-1$
+        }
+
+        // Only if parameter are supplied, we will add to the map...
+        if ((parameter != null) && (parameter.trim().length() > 0)) {
+          if (value.trim().length() <= 0) {
+            value = DatabaseConnection.EMPTY_OPTIONS_STRING;
+          }
+          meta.addExtraOption(meta.getDatabaseType().getShortName(), parameter, value);
+        }
+      }
+    }
+
   }
 
   private void setConnectionSpecificInfo(IDatabaseConnection meta) {
@@ -1507,6 +1528,9 @@ public class DataHandler extends AbstractXulEventHandler {
     if (serverNameBox != null) {
       serverNameBox.setValue(meta.getInformixServername());
     }
+
+//    update options data
+   setOptionsData(databaseConnection != null ? databaseConnection.getExtraOptions() : null);
 
   }
 
